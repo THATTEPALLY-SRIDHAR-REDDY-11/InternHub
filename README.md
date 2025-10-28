@@ -1,4 +1,8 @@
-# 🚀 Intern Insight Vault
+# 🚀 InternHub
+
+A comprehensive platform for students and professionals to manage internships, projects, and career development.
+
+*Previously known as Intern Insight Vault*
 
 A comprehensive platform for students and professionals to manage internships, projects, and career development.
 
@@ -41,8 +45,8 @@ A comprehensive platform for students and professionals to manage internships, p
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/intern-insight-vault.git
-   cd intern-insight-vault
+   git clone https://github.com/THATTEPALLY-SRIDHAR-REDDY-11/InternHub.git
+   cd InternHub
    ```
 
 2. **Install frontend dependencies**
@@ -199,7 +203,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you have any questions or need help, please:
 1. Check the [documentation](docs/)
-2. Open an [issue](https://github.com/yourusername/intern-insight-vault/issues)
+2. Open an [issue](https://github.com/THATTEPALLY-SRIDHAR-REDDY-11/InternHub/issues)
 3. Contact the maintainers
 
 ---
