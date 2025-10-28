@@ -1,0 +1,17 @@
+[
+  {
+    "_id": "resume-test123",
+    "user_id": "test123",
+    "personal_info": {
+      "full_name": "Test User",
+      "email": "test@example.com"
+    },
+    "education": [],
+    "experience": [],
+    "projects": [],
+    "skills": [],
+    "certifications": [],
+    "created_at": "2025-10-28T19:07:22.602Z",
+    "updated_at": "2025-10-28T19:07:22.602Z"
+  }
+]
