@@ -1,7 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
@@ -16,32 +12,24 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import ResumeBuilder from "./pages/ResumeBuilder";
 
-const queryClient = new QueryClient();
-
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/create" element={<CreateProject />} />
-            <Route path="/internships" element={<Internships />} />
-            <Route path="/internships/create" element={<CreateInternship />} />
-            <Route path="/resume" element={<ResumeBuilder />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <BrowserRouter>
+    <AuthProvider>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/create" element={<CreateProject />} />
+        <Route path="/internships" element={<Internships />} />
+        <Route path="/internships/create" element={<CreateInternship />} />
+        <Route path="/resume" element={<ResumeBuilder />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AuthProvider>
+  </BrowserRouter>
 );
 
 export default App;
