@@ -154,15 +154,19 @@ const initDb = async () => {
     console.log('[InternHub] 🔄 Connecting to MongoDB Atlas...');
     console.log('[InternHub] Connection string:', MONGODB_URI.replace(/:[^:@]*@/, ':****@'));
     
-    // Set shorter timeout for faster feedback
+    // MongoDB Atlas connection options
     await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 8000, // 8 second timeout
-      connectTimeoutMS: 15000, // 15 second connection timeout
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 20000,
+      maxPoolSize: 10, // Maintain up to 10 socket connections
+      serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
     });
     
     dbConnected = true;
     console.log('[InternHub] ✅ Successfully connected to MongoDB Atlas!');
     console.log('[InternHub] Database:', mongoose.connection.db.databaseName);
+    console.log('[InternHub] Environment:', process.env.NODE_ENV || 'development');
 
     const projectSchema = new mongoose.Schema({
       title: { type: String, required: true },
