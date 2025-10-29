@@ -1,6 +1,12 @@
+# Node
 node_modules/
+dist/
+.DS_Store
+npm-debug.log
+
+# Env files
 .env
 /server/.env
-dist/
-*.log
-.DS_Store
+
+# server uploads (optional)
+server/uploads/
