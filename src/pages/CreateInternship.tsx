@@ -1,234 +1,191 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import { Plus, X } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 
-export default function CreateInternship() {
-  const { user } = useAuth();
+const CreateInternship = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-
   const [formData, setFormData] = useState({
     title: '',
-    company_name: '',
-    description: '',
+    company: '',
     location: '',
-    remote: false,
+    description: '',
+    requirements: '',
+    salary: '',
     duration: '',
-    stipend: '',
-    apply_url: '',
-    skills: [] as string[]
+    applicationDeadline: ''
   });
-
-  const [skillInput, setSkillInput] = useState('');
-
-  const addSkill = () => {
-    if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        skills: [...prev.skills, skillInput.trim()]
-      }));
-      setSkillInput('');
-    }
-  };
-
-  const removeSkill = (skillToRemove: string) => {
-    setFormData(prev => ({
-      ...prev,
-      skills: prev.skills.filter(skill => skill !== skillToRemove)
-    }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!user) {
-      toast({ title: 'Error', description: 'Please login to post an internship', variant: 'destructive' });
-      return;
-    }
-
-    if (!formData.title || !formData.company_name || !formData.description) {
-      toast({ title: 'Error', description: 'Please fill in all required fields', variant: 'destructive' });
-      return;
-    }
-
     setLoading(true);
+
     try {
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
-      const response = await fetch(`${apiBaseUrl}/internships`, {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://internhub-backend-rnzq.onrender.com';
+      const response = await fetch(`${API_URL}/api/internships`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           ...formData,
-          poster_id: user.id,
-          poster_name: user.email?.split('@')[0] || 'Anonymous'
+          requirements: formData.requirements.split('\n').filter(req => req.trim())
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (response.ok) {
+        navigate('/internships');
+      } else {
+        alert('Error creating internship');
       }
-
-      toast({ title: 'Success', description: 'Internship posted successfully!' });
-      navigate('/internships');
     } catch (error) {
-      console.error('Error posting internship:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to post internship';
-      toast({ title: 'Error', description: errorMessage, variant: 'destructive' });
+      console.error('Error:', error);
+      alert('Error creating internship');
     } finally {
       setLoading(false);
     }
   };
 
-  if (!user) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Card className="max-w-xl mx-auto border-2">
-          <CardHeader>
-            <CardTitle>Post Internship</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">You need to be logged in to post an internship.</p>
-            <Button onClick={() => navigate('/auth')}>Sign In</Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card className="max-w-2xl mx-auto border-2">
-        <CardHeader>
-          <CardTitle>Post New Internship</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Job Title *</label>
-                <Input
-                  placeholder="e.g. Frontend Developer Intern"
-                  value={formData.title}
-                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">Company Name *</label>
-                <Input
-                  placeholder="e.g. Tech Corp"
-                  value={formData.company_name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, company_name: e.target.value }))}
-                  required
-                />
-              </div>
-            </div>
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Post New Internship</h1>
 
-            <div>
-              <label className="text-sm font-medium mb-2 block">Description *</label>
-              <Textarea
-                placeholder="Describe the internship role, responsibilities, and requirements..."
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                rows={4}
-                required
-              />
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Job Title
+          </label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Location</label>
-                <Input
-                  placeholder="e.g. New York, NY"
-                  value={formData.location}
-                  onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                />
-              </div>
-              <div className="flex items-center space-x-2 pt-8">
-                <Checkbox
-                  id="remote"
-                  checked={formData.remote}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, remote: Boolean(checked) }))}
-                />
-                <label htmlFor="remote" className="text-sm font-medium">Remote Work Available</label>
-              </div>
-            </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Company
+          </label>
+          <input
+            type="text"
+            name="company"
+            value={formData.company}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Duration</label>
-                <Input
-                  placeholder="e.g. 3 months"
-                  value={formData.duration}
-                  onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">Stipend</label>
-                <Input
-                  placeholder="e.g. $1000/month"
-                  value={formData.stipend}
-                  onChange={(e) => setFormData(prev => ({ ...prev, stipend: e.target.value }))}
-                />
-              </div>
-            </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Location
+          </label>
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-            <div>
-              <label className="text-sm font-medium mb-2 block">Application URL</label>
-              <Input
-                placeholder="https://company.com/apply"
-                value={formData.apply_url}
-                onChange={(e) => setFormData(prev => ({ ...prev, apply_url: e.target.value }))}
-                type="url"
-              />
-            </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Description
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            required
+            rows={4}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-            <div>
-              <label className="text-sm font-medium mb-2 block">Required Skills</label>
-              <div className="flex gap-2 mb-2">
-                <Input
-                  placeholder="Add a skill"
-                  value={skillInput}
-                  onChange={(e) => setSkillInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
-                />
-                <Button type="button" onClick={addSkill} size="sm">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {formData.skills.map((skill, index) => (
-                  <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                    {skill}
-                    <X
-                      className="h-3 w-3 cursor-pointer"
-                      onClick={() => removeSkill(skill)}
-                    />
-                  </Badge>
-                ))}
-              </div>
-            </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Requirements (one per line)
+          </label>
+          <textarea
+            name="requirements"
+            value={formData.requirements}
+            onChange={handleChange}
+            rows={4}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-            <div className="flex gap-4">
-              <Button type="submit" disabled={loading} className="flex-1">
-                {loading ? 'Posting...' : 'Post Internship'}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => navigate('/internships')}>
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Salary
+            </label>
+            <input
+              type="text"
+              name="salary"
+              value={formData.salary}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Duration
+            </label>
+            <input
+              type="text"
+              name="duration"
+              value={formData.duration}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Application Deadline
+          </label>
+          <input
+            type="date"
+            name="applicationDeadline"
+            value={formData.applicationDeadline}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+          >
+            {loading ? 'Creating...' : 'Create Internship'}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/internships')}
+            className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   );
-}
+};
+
+export default CreateInternship;

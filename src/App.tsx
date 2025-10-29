@@ -1,34 +1,28 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import Navbar from "@/components/Navbar";
 import Landing from "./pages/Landing";
-import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
-import Projects from "./pages/Projects";
-import CreateProject from "./pages/CreateProject";
 import Internships from "./pages/Internships";
 import CreateInternship from "./pages/CreateInternship";
-import NotFound from "./pages/NotFound";
-import Profile from "./pages/Profile";
-import ResumeBuilder from "./pages/ResumeBuilder";
 
 const App = () => (
   <BrowserRouter>
-    <AuthProvider>
-      <Navbar />
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <h1 className="text-xl font-bold text-gray-900">InternHub</h1>
+            </div>
+          </div>
+        </div>
+      </nav>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/projects/create" element={<CreateProject />} />
         <Route path="/internships" element={<Internships />} />
         <Route path="/internships/create" element={<CreateInternship />} />
-        <Route path="/resume" element={<ResumeBuilder />} />
-        <Route path="*" element={<NotFound />} />
       </Routes>
-    </AuthProvider>
+    </div>
   </BrowserRouter>
 );
 
